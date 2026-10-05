@@ -1,0 +1,83 @@
+[project]
+name = "rocky-sandbox"
+version = "0.1.0"
+description = "A lightweight sandboxed container for spinning up coding agents in the current directory."
+readme = "README.md"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dependencies = [
+    "click==8.5.0",
+]
+
+[project.urls]
+Repository = "https://github.com/wesc/rocky-sandbox"
+
+[project.scripts]
+rocky = "rocky.cli:main"
+
+[dependency-groups]
+dev = ["mypy", "pytest", "ruff", "shellcheck-py"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# The package carries its build context, src/rocky/context/, as data files.
+[tool.hatch.build.targets.wheel]
+packages = ["src/rocky"]
+
+# Ruff is the linter and the formatter for this repo.
+#
+#   uv run ruff format .        apply formatting
+#   uv run ruff format --check  verify it, as scripts/check.sh does
+#   uv run ruff check .         lint
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "B",   # flake8-bugbear
+    "I",   # import sorting
+    "UP",  # pyupgrade
+    "PL",  # pylint
+    "RUF", # ruff's own rules
+    "ANN", # every function annotated
+    "C4",  # comprehensions
+    "PIE", # misc lints
+    "PTH", # pathlib over os.path
+    "RET", # return statements
+    "SIM", # simplifications
+]
+ignore = [
+    # A missing return, judged without types: ruff cannot see that os.execvp
+    # never returns. mypy makes the same check with types.
+    "RET503",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests compare against literal expected values by design.
+"tests/**" = ["PLR2004"]
+
+# mypy, as strict as it goes: `uv run mypy`.
+[tool.mypy]
+files = ["src", "tests"]
+strict = true
+warn_unreachable = true
+enable_error_code = [
+    "exhaustive-match",
+    "explicit-override",
+    "ignore-without-code",
+    "possibly-undefined",
+    "redundant-expr",
+    "truthy-bool",
+]
+
+# `uv run pytest` runs the unit tests; the integration tests need the Rocky
+# image, and are run by scripts/integration.sh.
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]
+addopts = ["--strict-markers", "-p", "no:cacheprovider"]

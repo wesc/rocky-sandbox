@@ -37,7 +37,7 @@ rocky run [options] [command...]   open a shell, or run a command, in $PWD
 rocky build                        build the image; needed before the first run
 rocky build --update               rebuild with the latest agents and base image
 rocky ps                           list Rocky's containers and their directories
-rocky image                        print the tag of the image this Rocky runs
+rocky info image                   print the tag of the image this Rocky runs
 rocky print-context DIR            write the Dockerfile and entrypoint to DIR
 rocky help                         show the command list
 ```

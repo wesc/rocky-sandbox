@@ -97,9 +97,14 @@ def ps_cmd(settings: Settings) -> None:
     sys.exit(print_containers(settings))
 
 
-@cli.command("image")
+@cli.group("info", cls=CommandsInOrder)
+def info_group() -> None:
+    """Print one fact about this Rocky."""
+
+
+@info_group.command("image")
 @click.pass_obj
-def image_cmd(settings: Settings) -> None:
+def info_image_cmd(settings: Settings) -> None:
     """Print the tag of the image this Rocky runs."""
     click.echo(image.tag(settings))
 

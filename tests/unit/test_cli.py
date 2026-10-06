@@ -180,8 +180,8 @@ def test_a_stale_pinned_image_runs_with_a_warning(rocky: Rocky) -> None:
     assert "older than this Rocky" in result.stderr
 
 
-def test_image_prints_the_tag(rocky: Rocky) -> None:
-    assert rocky("image").stdout == f"rocky:{image.context_digest()}\n"
+def test_info_image_prints_the_tag(rocky: Rocky) -> None:
+    assert rocky("info", "image").stdout == f"rocky:{image.context_digest()}\n"
 
 
 def test_print_context(rocky: Rocky) -> None:
@@ -250,7 +250,7 @@ def home_mount(call: list[str], rocky: Rocky, profile: str) -> bool:
 def test_help_lists_the_commands(rocky: Rocky, argv: list[str]) -> None:
     result = rocky(*argv)
     assert result.status == 0
-    for command in ("run", "build", "ps", "image", "print-context"):
+    for command in ("run", "build", "ps", "info", "print-context"):
         assert f"  {command}" in result.stdout
     assert result.calls == []
 
@@ -267,7 +267,9 @@ def test_each_command_has_help(rocky: Rocky) -> None:
     [
         ["bogus"],
         ["build", "--bogus"],
-        ["image", "extra"],
+        ["image"],
+        ["info", "bogus"],
+        ["info", "image", "extra"],
         ["ps", "--all"],
         ["print-context"],
         ["print-context", "a", "b"],

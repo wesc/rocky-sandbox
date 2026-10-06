@@ -16,7 +16,7 @@ docker="${ROCKY_DOCKER:-docker}"
 unset ROCKY_IMAGE
 
 uv run --locked rocky build
-image="$(uv run --locked rocky image)"
+image="$(uv run --locked rocky info image)"
 digest="$("$docker" image inspect -f '{{index .Config.Labels "rocky.context"}}' "$image")"
 
 tty=()

@@ -41,7 +41,6 @@ rocky info                         print the facts below, as `name: value` lines
 rocky info workspace               print where `rocky run` mounts $PWD
 rocky info image                   print the tag of the image this Rocky runs
 rocky info home [-p NAME]          print the profile's home directory on the host
-rocky print-context DIR            write the Dockerfile and entrypoint to DIR
 rocky help                         show the command list
 ```
 

@@ -209,12 +209,6 @@ def test_bare_info_prints_every_fact(rocky: Rocky) -> None:
     )
 
 
-def test_print_context(rocky: Rocky) -> None:
-    assert rocky("print-context", str(rocky.tmp / "ctx")).status == 0
-    assert (rocky.tmp / "ctx" / "Dockerfile").is_file()
-    assert (rocky.tmp / "ctx" / "entrypoint.sh").is_file()
-
-
 def test_ps_lists_every_container_with_its_directory(rocky: Rocky) -> None:
     containers = [
         inspected("quirky_turing", "/src/two", "work", ("pi-acp",)),
@@ -275,7 +269,7 @@ def home_mount(call: list[str], rocky: Rocky, profile: str) -> bool:
 def test_help_lists_the_commands(rocky: Rocky, argv: list[str]) -> None:
     result = rocky(*argv)
     assert result.status == 0
-    for command in ("run", "build", "ps", "info", "print-context"):
+    for command in ("run", "build", "ps", "info"):
         assert f"  {command}" in result.stdout
     assert result.calls == []
 
@@ -297,8 +291,6 @@ def test_each_command_has_help(rocky: Rocky) -> None:
         ["info", "image", "extra"],
         ["info", "home", "-p", "../escape"],
         ["ps", "--all"],
-        ["print-context"],
-        ["print-context", "a", "b"],
         ["run", "-p"],
         ["run", "--profile"],
         ["run", "-p", "../escape"],

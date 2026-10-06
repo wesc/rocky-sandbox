@@ -6,7 +6,7 @@ import os
 import sys
 from collections.abc import Callable
 from datetime import UTC, datetime
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 from typing import Final, NoReturn, override
 
 import click
@@ -137,13 +137,6 @@ def info_image_cmd(settings: Settings) -> None:
 def info_home_cmd(settings: Settings, profile: ProfileName) -> None:
     """Print the host directory mounted at /home/rocky."""
     click.echo(container.profile_home(settings, profile))
-
-
-@cli.command("print-context")
-@click.argument("directory", type=click.Path(path_type=Path))
-def print_context_cmd(directory: Path) -> None:
-    """Write the Dockerfile and entrypoint to DIRECTORY."""
-    image.write_context(directory)
 
 
 @cli.command("help")

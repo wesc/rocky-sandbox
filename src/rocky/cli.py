@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final, NoReturn, override
 
 import click
+from click.decorators import FC
 
 from rocky import container, image, running
 from rocky.container import DEFAULT_PROFILE, Caller, ProfileName, RunRequest
@@ -51,18 +53,22 @@ def valid_profile(
         raise click.BadParameter(str(error)) from None
 
 
+def profile_option(help_text: str) -> Callable[[FC], FC]:
+    return click.option(
+        "-p",
+        "--profile",
+        default=DEFAULT_PROFILE,
+        show_default=True,
+        metavar="NAME",
+        callback=valid_profile,
+        help=help_text,
+    )
+
+
 # Options stop at the command, so `rocky run claude -p hi` gives -p to claude.
 # See test_run_options_end_at_the_command.
 @cli.command("run", context_settings={"allow_interspersed_args": False})
-@click.option(
-    "-p",
-    "--profile",
-    default=DEFAULT_PROFILE,
-    show_default=True,
-    metavar="NAME",
-    callback=valid_profile,
-    help="Run with this profile's home.",
-)
+@profile_option("Run with this profile's home.")
 @click.option(
     "--login",
     is_flag=True,

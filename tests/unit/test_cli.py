@@ -184,6 +184,31 @@ def test_info_image_prints_the_tag(rocky: Rocky) -> None:
     assert rocky("info", "image").stdout == f"rocky:{image.context_digest()}\n"
 
 
+def test_info_workspace_prints_where_run_mounts_the_directory(rocky: Rocky) -> None:
+    project = rocky.tmp / "proj.one"
+    project.mkdir()
+    result = rocky("info", "workspace", cwd=project)
+    assert result.stdout == f"{workspace_path(project)}\n"
+
+
+def test_info_home_prints_the_profile_home_without_creating_it(
+    rocky: Rocky,
+) -> None:
+    assert rocky("info", "home").stdout == f"{rocky.state / 'profiles' / 'main'}\n"
+    assert rocky("info", "home", "-p", "work").stdout.endswith("/profiles/work\n")
+    assert not (rocky.state / "profiles").exists()
+
+
+def test_bare_info_prints_every_fact(rocky: Rocky) -> None:
+    result = rocky("info")
+    assert result.status == 0
+    assert result.stdout == (
+        f"workspace: {workspace_path(rocky.tmp)}\n"
+        f"image: rocky:{image.context_digest()}\n"
+        f"home: {rocky.state / 'profiles' / 'main'}\n"
+    )
+
+
 def test_print_context(rocky: Rocky) -> None:
     assert rocky("print-context", str(rocky.tmp / "ctx")).status == 0
     assert (rocky.tmp / "ctx" / "Dockerfile").is_file()
@@ -270,6 +295,7 @@ def test_each_command_has_help(rocky: Rocky) -> None:
         ["image"],
         ["info", "bogus"],
         ["info", "image", "extra"],
+        ["info", "home", "-p", "../escape"],
         ["ps", "--all"],
         ["print-context"],
         ["print-context", "a", "b"],

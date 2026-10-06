@@ -6,7 +6,7 @@ import os
 import sys
 from collections.abc import Callable
 from datetime import UTC, datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Final, NoReturn, override
 
 import click
@@ -103,9 +103,25 @@ def ps_cmd(settings: Settings) -> None:
     sys.exit(print_containers(settings))
 
 
-@cli.group("info", cls=CommandsInOrder)
-def info_group() -> None:
-    """Print one fact about this Rocky."""
+@cli.group("info", cls=CommandsInOrder, invoke_without_command=True)
+@click.pass_context
+def info_group(ctx: click.Context) -> None:
+    """Print facts about Rocky, or the one named.
+
+    Bare `rocky info` prints each fact as `name: value`. A subcommand prints
+    only the value, for scripts.
+    """
+    if ctx.invoked_subcommand is None:
+        settings = ctx.ensure_object(Settings)
+        click.echo(f"workspace: {workspace()}")
+        click.echo(f"image: {image.tag(settings)}")
+        click.echo(f"home: {container.profile_home(settings, DEFAULT_PROFILE)}")
+
+
+@info_group.command("workspace")
+def info_workspace_cmd() -> None:
+    """Print where `rocky run` mounts $PWD in the container."""
+    click.echo(workspace())
 
 
 @info_group.command("image")
@@ -113,6 +129,14 @@ def info_group() -> None:
 def info_image_cmd(settings: Settings) -> None:
     """Print the tag of the image this Rocky runs."""
     click.echo(image.tag(settings))
+
+
+@info_group.command("home")
+@profile_option("Print this profile's home.")
+@click.pass_obj
+def info_home_cmd(settings: Settings, profile: ProfileName) -> None:
+    """Print the host directory mounted at /home/rocky."""
+    click.echo(container.profile_home(settings, profile))
 
 
 @cli.command("print-context")
@@ -150,6 +174,10 @@ def start_container(settings: Settings, request: RunRequest) -> NoReturn:
     home.mkdir(mode=0o700, parents=True, exist_ok=True)
     argv = container.docker_run_argv(settings, Caller.current(), tag, request)
     os.execvp(argv[0], argv)
+
+
+def workspace() -> PurePosixPath:
+    return container.workspace_path(Caller.current().workdir)
 
 
 def print_containers(settings: Settings) -> int:

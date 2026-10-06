@@ -137,6 +137,7 @@ install` does not read `uv.lock`, so the exact versions in `pyproject.toml` are 
 | `tests/unit/` | fast tests: no docker, no root, no network |
 | `tests/integration/` | end-to-end tests that run inside the Rocky image |
 | `scripts/` | `check.sh` and `integration.sh`, which run the two kinds of tests |
+| `integrations/emacs/` | `rocky-agent-shell.el`, which runs agent-shell's agents inside Rocky |
 
 What happens inside the container is in `src/rocky/context/`. The Dockerfile's comments explain
 where the toolchains live and why any user can write to them. `entrypoint.sh` explains how the

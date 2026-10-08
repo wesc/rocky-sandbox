@@ -106,10 +106,9 @@ def ps_cmd(settings: Settings) -> None:
 @cli.group("info", cls=CommandsInOrder, invoke_without_command=True)
 @click.pass_context
 def info_group(ctx: click.Context) -> None:
-    """Print facts about Rocky, or the one named.
+    """Print facts about Rocky.
 
-    Bare `rocky info` prints each fact as `name: value`. A subcommand prints
-    only the value, for scripts.
+    Bare: each fact as `name: value`. With a subcommand: that value alone.
     """
     if ctx.invoked_subcommand is None:
         settings = ctx.ensure_object(Settings)

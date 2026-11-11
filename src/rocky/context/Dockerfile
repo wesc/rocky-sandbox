@@ -3,7 +3,9 @@ FROM debian:stable-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SHELL=/bin/bash
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get -y dist-upgrade \
+    && apt-get install -y --no-install-recommends \
     curl \
     iproute2 \
     iputils-ping \

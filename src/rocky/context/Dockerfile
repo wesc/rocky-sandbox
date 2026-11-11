@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     iproute2 \
     iputils-ping \
+    bind9-dnsutils \
     vim-tiny \
     git \
     less \
